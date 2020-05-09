@@ -3,9 +3,8 @@ import 'homepage.dart';
 import 'firstScreen.dart';
 import 'register.dart';
 import 'login.dart';
-import 'detailScreen.dart';
 import 'settings.dart';
-import 'spinnerloader.dart';
+import 'spinnerloader.dart';  
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 
 void main() {
@@ -23,7 +22,6 @@ class MyApp extends StatelessWidget {
         '/login': (context) => Login(),
         '/register': (context) => Register(),
         '/homescreen': (context) => Homepage(),
-        '/detailScreen': (context) => ItemDetailsPage(),
         '/settingscreen' : (context) => Settings(),
         '/loaderspinnerscreen' : (context) => SpinnerWidget()
       },
