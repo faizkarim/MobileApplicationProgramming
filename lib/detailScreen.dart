@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import './modal/itemModal.dart';
 
 class ItemDetailsPage extends StatefulWidget {
+  final Item itemDetailsData;
+  ItemDetailsPage(this.itemDetailsData);
   @override
   _ItemDetailsPageState createState() => _ItemDetailsPageState();
 }
@@ -15,6 +18,10 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
+        leading: GestureDetector(
+          onTap:()=> Navigator.of(context).pop(),
+          child:Icon(Icons.arrow_back,color:widget.itemDetailsData.itemImg!=null ?Colors.white:Colors.black54,)
+        ),
         actions: <Widget>[
           Container(
             margin: EdgeInsets.only(right: 15.0),
@@ -32,10 +39,35 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               new Container(
                 height: 300.0,
                 width: MediaQuery.of(context).size.width,
+                child: widget.itemDetailsData.itemImg == null
+                    ? Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.broken_image,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(width: 5.0),
+                            Text(
+                              'Image Not Available',
+                              style: TextStyle(
+                                  fontFamily: 'OpenSans', color: Colors.grey),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                          color: Colors.grey.withOpacity(0.5),
+                          width: 1.0,
+                        )),
+                      )
+                    : Image.file(
+                        widget.itemDetailsData.itemImg,
+                        fit: BoxFit.fill,
+                      ),
                 decoration: new BoxDecoration(
-                  image: DecorationImage(
-                      image: new AssetImage('assets/images/item1.jpg'),
-                      fit: BoxFit.fill),
                   shape: BoxShape.rectangle,
                   //border: Border.all(width: 1.0, color: Colors.black)
                 ),
@@ -48,14 +80,14 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       new Text(
-                        'Hyper x Fury DDR',
+                        widget.itemDetailsData.itemName,
                         style: new TextStyle(fontSize: 20.0),
                       ),
                       SizedBox(
                         height: 2.0,
                       ),
                       new Text(
-                        'RM 480',
+                        'RM ${widget.itemDetailsData.price}',
                         style: TextStyle(
                             fontSize: 25.0, fontWeight: FontWeight.bold),
                       ),
@@ -72,7 +104,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 ),
                                 SizedBox(width: 5.0),
                                 Text(
-                                  '1 week ago by johndoe817',
+                                  '1 week ago by ${widget.itemDetailsData.sellerDetails.username}',
                                   style: TextStyle(color: Colors.black54),
                                 )
                               ],
@@ -100,7 +132,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 ),
                                 SizedBox(width: 5.0),
                                 Text(
-                                  'in Electronics',
+                                  'in ${widget.itemDetailsData.itemDetails.category}',
                                   style: TextStyle(color: Colors.black54),
                                 )
                               ],
@@ -135,7 +167,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                           children: <Widget>[
                             new Expanded(
                               child: Text(
-                                  'Sepasang SSD untuk diletgo condition mantap area utm sahaja',
+                                  widget
+                                      .itemDetailsData.itemDetails.description,
                                   style: new TextStyle(
                                       color: Colors.black87,
                                       fontSize: 15.0,
@@ -185,7 +218,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 ),
                                 SizedBox(width: 10.0),
                                 Text(
-                                  'Arked Meranti',
+                                  widget.itemDetailsData.itemDetails.place,
                                   style: TextStyle(
                                       color: Colors.blueAccent,
                                       fontFamily: 'OpenSans'),
@@ -223,7 +256,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  new Text('johndoe817 ',
+                                  new Text(
+                                      widget.itemDetailsData.sellerDetails
+                                          .username,
                                       style: new TextStyle(
                                           color: Colors.blueAccent,
                                           fontWeight: FontWeight.w600,
@@ -232,7 +267,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                   SizedBox(
                                     height: 5.0,
                                   ),
-                                  new Text('019-5643245',
+                                  new Text(
+                                      widget.itemDetailsData.sellerDetails
+                                          .phoneNo,
                                       style: new TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 15.0,
@@ -240,7 +277,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                   SizedBox(
                                     height: 5.0,
                                   ),
-                                  new Text('albab@gmail.com',
+                                  new Text(
+                                      widget
+                                          .itemDetailsData.sellerDetails.email,
                                       style: new TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 15.0,
