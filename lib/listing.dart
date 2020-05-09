@@ -94,7 +94,6 @@ class _ListingScreenState extends State<ListingScreen> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Padding(
-                                            padding: const EdgeInsets.all(10.0),
                                             child: Text('2 days ago',
                                                 style: TextStyle(
                                                     color:
