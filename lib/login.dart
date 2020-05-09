@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './data/mockUserDetails.dart';
 
 Color maincolor = Color(0xFFF1E90FF);
 Color secondaryColor = Color(0xFFF3881E3);
@@ -105,9 +106,11 @@ class _LoginState extends State<Login> {
                         color: Colors.blueAccent),
                     child: FlatButton(
                       onPressed: () {
-                        if (username.text == 'man' && password.text == '123') {
+                        if (username.text == mockUserDetails[0].userName &&
+                            password.text == mockUserDetails[0].password) {
                           print(username.text);
-                          Navigator.pushReplacementNamed(context, '/loaderspinnerscreen');
+                          Navigator.pushReplacementNamed(
+                              context, '/loaderspinnerscreen');
                         }
                         if (username.text.isEmpty) {
                           setState(() {
@@ -138,4 +141,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-
