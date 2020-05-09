@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 : Icon(
                                     EvaIcons.image,
                                     size: 60,
-                                    color: Colors.white,
+                                    color: Colors.white, 
                                   ),
                        
                           ],
