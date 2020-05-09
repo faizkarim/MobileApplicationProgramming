@@ -9,3 +9,5 @@ Group Members :
 Github Link : https://github.com/faizkarim/MobileApplicationProgramming.git
 
 Video URL : https://www.youtube.com/watch?v=u7666zOCnr8
+
+New Video Project Delivarable #3 Url : https://youtu.be/77PX7VcTPN0
