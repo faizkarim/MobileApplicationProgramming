@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'dart:async';
-import './modal/mockNotification.dart';
-import './modal/notificationModal.dart';
-import 'package:mobileapp/data/userDetails.dart';
-import 'package:intl/intl.dart';
 
 class Changepassword extends StatefulWidget {
-  final UserDetails _userData;
-  Changepassword(this._userData);
   @override
   _ChangepasswordState createState() => _ChangepasswordState();
 }
@@ -17,24 +11,6 @@ class _ChangepasswordState extends State<Changepassword> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Timer _timer;
   bool _absorber = false;
-  String _currentPass;
-  TextEditingController _newPass = new TextEditingController();
-  String _confirmNewPass;
-  bool _autoValidate = false;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime now;
-  var dateTime;
-  String formattedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    now = DateTime.now();
-    formattedDate = DateFormat('dd-MM-yyyy / kk:mm').format(now);
-    print(formattedDate);
-    dateTime = formattedDate.toString().split("/");
-    print(dateTime[0]);
-  }
 
   _displaySnackBar(BuildContext context) {
     final snackBar = SnackBar(
@@ -54,60 +30,38 @@ class _ChangepasswordState extends State<Changepassword> {
         setState(() {
           _absorber = true;
         });
-        _timer = new Timer(const Duration(seconds: 2), () {});
+        _timer = new Timer(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
       },
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  _validateInputs() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+  createAlertDialog(BuildContext context) {
+    Widget yesButton = FlatButton(
+      child: Text("Yes"),
+      onPressed: () {
+        _displaySnackBar(context);
+        Navigator.pop(context);
+      },
+    );
+    Widget noButton = FlatButton(
+      child: Text("No"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
 
-      setState(() {
-        widget._userData.password = _newPass.text;
-      });
-
-      FocusScopeNode currentFocus = FocusScope.of(context);
-      if (!currentFocus.hasPrimaryFocus) {
-        currentFocus.unfocus();
-      }
-      Notifications notifications = new Notifications('Password Changed','Your password has succesfully change',dateTime[0] , dateTime[1], false);
-      mockNotification.add(notifications);
-
-      _displaySnackBar(context);
-      await Future.delayed(Duration(seconds: 2));
-      Navigator.pop(context, widget._userData);
-    } else {
-      return null;
-    }
-  }
-
-  String validateCurrentPass(String value) {
-    if (value.isEmpty)
-      return 'Current Password cannot be blank';
-    else if (value != widget._userData.password)
-      return 'Current password does not match';
-    else
-      return null;
-  }
-
-  String validateNewPass(String value) {
-    if (value.isEmpty)
-      return 'New Password cannot be blank';
-    else if (value.length < 6)
-      return 'Password must be 6 characters or more';
-    else
-      return null;
-  }
-
-  String validateConfirmPass(String value) {
-    if (value.isEmpty)
-      return 'Confirm Password cannot be blank';
-    else if (value != _newPass.text)
-      return 'Password does not match';
-    else
-      return null;
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Are you sure that you want to change your password?"),
+            actions: <Widget>[
+              yesButton,
+              noButton,
+            ],
+          );
+        });
   }
 
   Widget build(BuildContext context) {
@@ -116,20 +70,22 @@ class _ChangepasswordState extends State<Changepassword> {
         appBar: AppBar(
           elevation: 0,
           brightness: Brightness.light,
-          leading: IconButton(
+           leading: IconButton(
               icon: Icon(
                 EvaIcons.arrowBack,
                 color: Colors.black,
               ),
-              onPressed: () => Navigator.pop(context)),
+              onPressed: () => Navigator.of(context).pop()),
           backgroundColor: Colors.transparent,
           actions: <Widget>[
             Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: IconButton(
+              padding: const EdgeInsets.all(10.0),
+              child: IconButton(
                   icon: Icon(EvaIcons.checkmark, color: Colors.black),
-                  onPressed: _validateInputs,
-                ))
+                  onPressed: () {
+                    createAlertDialog(context);
+                  }),
+            )
           ],
         ),
         body: Container(
@@ -150,40 +106,27 @@ class _ChangepasswordState extends State<Changepassword> {
                 ),
                 Container(
                     child: Form(
-                        autovalidate: _autoValidate,
-                        key: _formKey,
                         child: Column(
-                          children: <Widget>[
-                            TextFormField(
-                                validator: validateCurrentPass,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                    hintText: 'Current Password',
-                                    hintStyle:
-                                        TextStyle(fontFamily: 'OpenSans'))),
-                            SizedBox(height: 20.0),
-                            TextFormField(
-                                validator: validateNewPass,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                    hintText: 'New Password',
-                                    hintStyle:
-                                        TextStyle(fontFamily: 'OpenSans'))),
-                            SizedBox(height: 20.0),
-                            TextFormField(
-                                validator: validateConfirmPass,
-                                onChanged: (val) {
-                                  setState(() {
-                                    _newPass = TextEditingController(text: val);
-                                  });
-                                },
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                    hintText: 'Confirm new password',
-                                    hintStyle:
-                                        TextStyle(fontFamily: 'OpenSans'))),
-                          ],
-                        ))),
+                  children: <Widget>[
+                    TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            hintText: 'Current Password',
+                            hintStyle: TextStyle(fontFamily: 'OpenSans'))),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            hintText: 'New Password',
+                            hintStyle: TextStyle(fontFamily: 'OpenSans'))),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            hintText: 'Confirm new password',
+                            hintStyle: TextStyle(fontFamily: 'OpenSans'))),
+                  ],
+                ))),
               ])),
         ));
   }
