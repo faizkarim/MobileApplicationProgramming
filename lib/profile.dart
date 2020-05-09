@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Icon(
                               EvaIcons.facebook,
                               color: Colors.white,
-                              size: 35,
+                              size:35,
                             ),
                             Icon(
                               EvaIcons.google,
