@@ -3,6 +3,7 @@ import './data/mockUserDetails.dart';
 
 Color maincolor = Color(0xFFF1E90FF);
 Color secondaryColor = Color(0xFFF3881E3);
+Color tertiaryColor = Color(0xFFF084177);
 
 class Login extends StatefulWidget {
   @override
