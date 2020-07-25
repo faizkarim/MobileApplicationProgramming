@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "412958528940",
+    "firebase_url": "https://unisell-backend-ed0c0.firebaseio.com",
+    "project_id": "unisell-backend-ed0c0",
+    "storage_bucket": "unisell-backend-ed0c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412958528940:android:b28d3518ec9bd07e3dd609",
+        "android_client_info": {
+          "package_name": "com.example.projectapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "412958528940-dkecg02434l23o7578g4ugngaoikqfcj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNwUXocfz1B67YWALy_36sWMpQuaxiEps"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "412958528940-dkecg02434l23o7578g4ugngaoikqfcj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
