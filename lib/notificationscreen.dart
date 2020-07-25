@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import './modal/notificationModal.dart';
+import './services/notification_services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class NotificationScreen extends StatefulWidget {
-  final List _notificationData;
-  NotificationScreen(this._notificationData);
-
   @override
   _NotificationScreenState createState() => _NotificationScreenState();
 }
 
+Future<List<Notifications>> notificationsFuture;
+
 class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    notificationsFuture = NotificationService().getAllNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.refresh),
+          onPressed: () {
+            this.setState(() {
+              notificationsFuture = NotificationService().getAllNotifications();
+            });
+          }),
       body: Container(
         padding: EdgeInsets.only(top: 18.0),
         margin: MediaQuery.of(context).padding,
@@ -33,123 +47,111 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
             //notifications start here
             Expanded(
-                child: ListView.builder(
-                    itemCount: widget._notificationData.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            color: widget._notificationData[index].read
-                                ? Colors.transparent
-                                : Colors.lightBlue.withOpacity(0.08),
-                            border: Border(
-                              bottom: BorderSide(
-                                  width: 1.0,
-                                  color: Colors.black.withOpacity(0.05)),
-                            )),
-                        child: Dismissible(
-                          direction: DismissDirection.endToStart,
-                          secondaryBackground: null,
-                          background: Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                                width: 120,
-                                height: MediaQuery.of(context).size.height,
-                                color: Colors.red,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      EvaIcons.trash2,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 2.0,
-                                    ),
-                                    Text('Delete',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'OpenSans'))
-                                  ],
-                                )),
-                          ),
-                          key: Key(widget._notificationData[index].text1),
-                          onDismissed: (direction) {
-                            setState(() {
-                              widget._notificationData.removeAt(index);
-                            });
-                          },
-                          child: ListTile(
-                            dense: true,
-                            onTap: () {
-                              setState(() {
-                                widget._notificationData[index].read = true;
-                              });
-                            },
-                            title: Container(
-                              margin: EdgeInsets.only(top: 10.0),
-                              child: Text(
-                                widget._notificationData[index].text1,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'OpenSans'),
-                              ),
-                            ),
-                            contentPadding:
-                                EdgeInsets.only(left: 16.0, right: 16.0),
-                            leading: CircleAvatar(
-                              child: Text(
-                                'U',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.grey.withOpacity(0.5),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
+              child: FutureBuilder(
+                future: notificationsFuture,
+                builder: (BuildContext context, AsyncSnapshot s) {
+                  var n = s.data;
+
+                  return s.hasData
+                      ? ListView.builder(
+                          itemCount: n.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  color: n[index].read
+                                      ? Colors.transparent
+                                      : Colors.lightBlue.withOpacity(0.08),
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        width: 1.0,
+                                        color: Colors.black.withOpacity(0.05)),
+                                  )),
+                              child: ListTile(
+                                dense: true,
+                                onLongPress: () {
+                                  // NotificationService()
+                                  //     .deleteNotifications(id: n[index].id);
+                                },
+                                onTap: () {
+                                  setState(() {
+                                    if (n[index].read == false) {
+                                      NotificationService().updateNotifications(
+                                          id: n[index].id, read: n[index].read);
+                                    }
+                                  });
+                                },
+                                title: Container(
+                                  margin: EdgeInsets.only(top: 10.0),
                                   child: Text(
-                                    widget._notificationData[index].text2,
+                                    n[index].text1,
                                     style: TextStyle(
-                                        fontFamily: 'OpenSans',
-                                        color: Colors.black54),
-                                    textAlign: TextAlign.justify,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'OpenSans'),
                                   ),
                                 ),
-                                SizedBox(height: 8),
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 10.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.access_time,
-                                        size: 15.0,
-                                        color: Colors.black38,
-                                      ),
-                                      SizedBox(
-                                        width: 5.0,
-                                      ),
-                                      Text(
-                                        widget._notificationData[index].date,
-                                        style: TextStyle(color: Colors.black38),
-                                      ),
-                                      SizedBox(
-                                        width: 5.0,
-                                      ),
-                                      Text(
-                                        widget._notificationData[index].time,
-                                        style: TextStyle(color: Colors.black38),
-                                      ),
-                                    ],
+                                contentPadding:
+                                    EdgeInsets.only(left: 16.0, right: 16.0),
+                                leading: CircleAvatar(
+                                  child: Text(
+                                    'U',
+                                    style: TextStyle(color: Colors.white),
                                   ),
+                                  backgroundColor: Colors.grey.withOpacity(0.5),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    })),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        n[index].text2,
+                                        style: TextStyle(
+                                            fontFamily: 'OpenSans',
+                                            color: Colors.black54),
+                                        textAlign: TextAlign.justify,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 10.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.access_time,
+                                            size: 15.0,
+                                            color: Colors.black38,
+                                          ),
+                                          SizedBox(
+                                            width: 5.0,
+                                          ),
+                                          Text(
+                                            n[index].date,
+                                            style: TextStyle(
+                                                color: Colors.black38),
+                                          ),
+                                          SizedBox(
+                                            width: 5.0,
+                                          ),
+                                          Text(
+                                            n[index].time,
+                                            style: TextStyle(
+                                                color: Colors.black38),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          })
+                      : SpinKitFoldingCube(
+                          color: Colors.blueAccent,
+                          size: 30.0,
+                        );
+                },
+              ),
+            ),
           ],
         ),
       ),
