@@ -3,6 +3,8 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:mobileapp/data/mockUserDetails.dart';
 import 'package:mobileapp/data/userDetails.dart';
 import 'package:mobileapp/settings.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:clip_shadow/clip_shadow.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserDetails userdetails;
@@ -43,90 +45,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
             margin: MediaQuery.of(context).padding,
             child: Column(
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(bottom: 40.0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                      Colors.blueAccent.withOpacity(0.85),
-                      Colors.blueAccent
-                    ]),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 60.0,
-                        backgroundImage: mockUserDetails[0].profileImage ==
-                                null
-                            ? null
-                            : FileImage(mockUserDetails[0].profileImage),
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        child: Column(
+                ClipShadow(
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 1.0,
+                      offset: Offset(0.0, 5.0),
+                      color: Colors.lightBlue.withOpacity(0.3),
+                    )
+                  ],
+                  clipper: WaveClipperTwo(),
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 40.0),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 3,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Colors.blueAccent, Colors.lightBlue]),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 60.0,
+                          backgroundImage:
+                              mockUserDetails[0].profileImage == null
+                                  ? null
+                                  : FileImage(mockUserDetails[0].profileImage),
+                          backgroundColor: Colors.white.withOpacity(0.2),
+                          child: mockUserDetails[0].profileImage != null ||
+                                  widget.userdetails.profileImage != null
+                              ? Container()
+                              : Icon(
+                                  EvaIcons.image,
+                                  size: 60,
+                                  color: Colors.white,
+                                ),
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            mockUserDetails[0].profileImage != null ||
-                                    widget.userdetails.profileImage != null
-                                ? Container()
-                                : Icon(
-                                    EvaIcons.image,
-                                    size: 60,
-                                    color: Colors.white, 
-                                  ),
-                       
+                            Container(
+                              child: Text(
+                                mockUserDetails[0].userName,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'OpenSans'),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Container(
+                                child: Text(
+                              mockUserDetails[0].fullName,
+                              style: TextStyle(
+                                  color: Colors.white, fontFamily: 'OpenSans'),
+                            )),
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Container(
-                        child: Text(
-                          mockUserDetails[0].userName,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'OpenSans'),
+                        SizedBox(
+                          height: 20.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Container(
-                          child: Text(
-                        mockUserDetails[0].fullName,
-                        style: TextStyle(
-                            color: Colors.white, fontFamily: 'OpenSans'),
-                      )),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Container(
-                        width: 130,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Icon(
-                              EvaIcons.facebook,
-                              color: Colors.white,
-                              size:35,
-                            ),
-                            Icon(
-                              EvaIcons.google,
-                              color: Colors.white,
-                              size: 35,
-                            ),
-                            Icon(
-                              EvaIcons.twitter,
-                              color: Colors.white,
-                              size: 35,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
@@ -136,19 +123,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: <Widget>[
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Icon(
-                            EvaIcons.pinOutline,
-                            size: 30,
-                            color: Colors.black26,
+                          Container(
+                            height: 60.0,
+                            width: 60.0,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                              elevation: 3.0,
+                              child: Icon(
+                                EvaIcons.navigation2,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
                           ),
                           SizedBox(
-                            width: 30.0,
+                            width: 20.0,
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width - 96,
+                            width: MediaQuery.of(context).size.width - 126,
                             child: Text(
                               mockUserDetails[0].location,
                               style: TextStyle(
@@ -169,16 +164,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Row(
                         children: <Widget>[
-                          Icon(
-                            EvaIcons.messageSquareOutline,
-                            color: Colors.black26,
-                            size: 30.0,
+                          Container(
+                            height: 60.0,
+                            width: 60.0,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                              elevation: 3.0,
+                              child: Icon(
+                                EvaIcons.messageSquare,
+                                color: Colors.redAccent,
+                              ),
+                            ),
                           ),
                           SizedBox(
-                            width: 30.0,
+                            width: 20.0,
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width - 96,
+                            width: MediaQuery.of(context).size.width - 126,
                             child: Text(
                               mockUserDetails[0].email,
                               style: TextStyle(
@@ -199,16 +202,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Row(
                         children: <Widget>[
-                          Icon(
-                            EvaIcons.phoneOutline,
-                            color: Colors.black26,
-                            size: 30.0,
+                          Container(
+                            height: 60.0,
+                            width: 60.0,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                              elevation: 3.0,
+                              child: Icon(
+                                EvaIcons.phone,
+                                color: Colors.greenAccent,
+                              ),
+                            ),
                           ),
                           SizedBox(
-                            width: 30.0,
+                            width: 20.0,
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width - 96,
+                            width: MediaQuery.of(context).size.width - 126,
                             child: Text(
                               mockUserDetails[0].phoneNo,
                               style: TextStyle(
