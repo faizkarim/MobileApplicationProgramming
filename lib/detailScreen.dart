@@ -230,7 +230,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                       ),
                       new Divider(),
                       Container(
-                        child: new Text('Meet The Seller',
+                        child: new Text('Meet The Sellers',
                             style: new TextStyle(
                               fontWeight: FontWeight.bold,
                               fontFamily: 'OpenSans',
