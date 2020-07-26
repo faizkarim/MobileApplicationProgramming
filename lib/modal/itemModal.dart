@@ -1,18 +1,38 @@
-import 'dart:io';
-
 class Item {
-  File itemImg;
+  String id;
+  String itemImg;
   String itemName;
   String price;
-  ItemDetails itemDetails;
-  Seller sellerDetails;
+  bool save;
+  ItemDetails itemdetails;
 
-  Item(this.itemImg, this.itemName, this.price, 
-      this.itemDetails, this.sellerDetails);
+  Item({
+    this.id,
+    this.itemImg,
+    this.itemName,
+    this.price,
+    this.save,
+    this.itemdetails,
+  });
 
-  Item.copy(Item from)
-      : this(from.itemImg, from.itemName, from.price,
-            from.itemDetails, from.sellerDetails);
+  factory Item.fromJson(Map<String, dynamic> json) {
+    return Item(
+      id: json['id'],
+      itemImg: json['itemImg'],
+      itemName: json['itemName'],
+      price: json['price'],
+      save: json['save'],
+      itemdetails: ItemDetails.fromJson(json['itemdetails']),
+    );
+  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'itemImg': itemImg,
+        'itemName': itemName,
+        'price': price,
+        'save': save,
+        'itemdetails': itemdetails.toJson(),
+      };
 }
 
 class ItemDetails {
@@ -20,18 +40,19 @@ class ItemDetails {
   String description;
   String place;
 
-  ItemDetails(this.category, this.description, this.place);
+  ItemDetails({this.category, this.description, this.place});
 
-  ItemDetails.copy(ItemDetails from)
-      : this(from.category, from.description, from.place);
-}
+  factory ItemDetails.fromJson(Map<String, dynamic> json) {
+    return ItemDetails(
+      category: json['category'],
+      description: json['description'],
+      place: json['place'],
+    );
+  }
 
-class Seller {
-  String username;
-  String phoneNo;
-  String email;
-
-  Seller(this.username, this.phoneNo, this.email);
-
-  Seller.copy(Seller from) : this(from.username, from.phoneNo, from.email);
+  Map<String, dynamic> toJson() => {
+        'category': category,
+        'description': description,
+        'place': place,
+      };
 }

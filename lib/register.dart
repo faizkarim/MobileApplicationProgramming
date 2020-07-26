@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:mobileapp/services/user_services.dart';
 import 'firstScreen.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import './services/user_services.dart';
+import './modal/userModal.dart';
 
 Color maincolor = Color(0xFFF1E90FF);
 Color secondaryColor = Color(0xFFF3881E3);
@@ -15,14 +19,19 @@ class Register extends StatefulWidget {
 }
 
 class RegisterState extends State<Register> {
-  String _username;
-  String _phone;
-  String _location;
-  String _password;
+  static String _id;
+  static String _username;
+  static String _fullname;
+  static String _email;
+  static String _phone;
+  static String _location = "Location";
+  static String _password;
+  
   bool _autoValidate = false;
   bool _absorber = false;
-  String _selectedLocation = "Location";
+  
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Timer _timer;
 
@@ -54,9 +63,32 @@ class RegisterState extends State<Register> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  _validateInputs() {
+  _validateInputs() async{
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
+      try {
+        FirebaseUser user = (await _auth.createUserWithEmailAndPassword(email: _email, password: _password)).user;
+        print('Registered user : ${user.uid}');
+        _id = user.uid;
+        print(_id);
+        print(_username);
+        print(_fullname);
+        print(_phone);
+        print(_location);
+        print(_email);
+      }
+      catch (e) {
+        print('Error: $e');
+      }
+      User newUser = User(
+        id: _id,
+        userName: _username,
+        fullName: _fullname,
+        phoneNo: _phone,
+        location: _location,
+        email: _email,
+      );
+      UserService().addUser(user: newUser);
       _displaySnackBar(context);
     } else {
       setState(() {
@@ -74,6 +106,13 @@ class RegisterState extends State<Register> {
       return null;
   }
 
+   String validateFullname(String value) {
+    if (value.isEmpty)
+      return 'Full name cannot be blank';
+    else
+      return null;
+  }
+
   String validatePassword(String value) {
     if (value.isEmpty) {
       return 'Password cannot be blank';
@@ -84,21 +123,23 @@ class RegisterState extends State<Register> {
   }
 
   String validatePhone(String value) {
-    if (!(value.length >= 10 && value.length <= 11))
+    if (value.isEmpty)
+      return 'Phone number cannot be blank';
+    else if (!(value.length >= 10 && value.length <= 11))
       return 'Please enter a valid phone number';
     else
       return null;
   }
 
-  // String validateEmail(String value) {
-  //   Pattern pattern =
-  //       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  //   RegExp regex = new RegExp(pattern);
-  //   if (!regex.hasMatch(value))
-  //     return 'Enter Valid Email';
-  //   else
-  //     return null;
-  // }
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Enter Valid Email';
+    else
+      return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,13 +158,6 @@ class RegisterState extends State<Register> {
                 height: MediaQuery.of(context).size.height,
                 child: Column(
                   children: <Widget>[
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Image(image: AssetImage('assets/images/logo.png')),
-                    SizedBox(
-                      height: 10.0,
-                    ),
                     Container(
                       width: MediaQuery.of(context).size.width - 60,
                       child: Column(
@@ -154,7 +188,7 @@ class RegisterState extends State<Register> {
                                 child: Column(
                                   children: <Widget>[
                                     SizedBox(
-                                      height: 20.0,
+                                      height: 15.0,
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width -
@@ -162,7 +196,9 @@ class RegisterState extends State<Register> {
                                       child: TextFormField(
                                         validator: validateUsername,
                                         onSaved: (String val) {
-                                          _username = val;
+                                          setState(() {
+                                            _username = val;
+                                          });
                                         },
                                         decoration: InputDecoration(
                                             labelText: 'Username',
@@ -177,9 +213,50 @@ class RegisterState extends State<Register> {
                                       width: MediaQuery.of(context).size.width -
                                           60,
                                       child: TextFormField(
+                                        validator: validateFullname,
+                                        onSaved: (String val) {
+                                          setState(() {
+                                            _fullname = val;
+                                          }); 
+                                        },
+                                        decoration: InputDecoration(
+                                            labelText: 'Full Name',
+                                            labelStyle: TextStyle(
+                                                fontFamily: 'Ubuntu')),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width -
+                                          60,
+                                      child: TextFormField(
+                                        validator: validateEmail,
+                                        onSaved: (String val) {
+                                          setState(() {
+                                            _email = val;
+                                          });
+                                        },
+                                        
+                                        decoration: InputDecoration(
+                                            labelText: 'Email',
+                                            labelStyle: TextStyle(
+                                                fontFamily: 'Ubuntu')),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width -
+                                          60,
+                                      child: TextFormField(
                                         validator: validatePassword,
                                         onSaved: (String val) {
-                                          _password = val;
+                                          setState(() {
+                                            _password = val;
+                                          });
                                         },
                                         obscureText: true,
                                         decoration: InputDecoration(
@@ -227,10 +304,11 @@ class RegisterState extends State<Register> {
                                             ),
                                           ),
                                         ),
-                                        hint: Text(_selectedLocation),
+                                        hint: Text(_location),
                                         onChanged: (newValue) {
-                                          _selectedLocation = newValue;
-                                          this.setState(() {});
+                                          this.setState(() {
+                                            _location = newValue;
+                                          });
                                         },
                                       ),
                                     ),
@@ -244,7 +322,9 @@ class RegisterState extends State<Register> {
                                         keyboardType: TextInputType.number,
                                         validator: validatePhone,
                                         onSaved: (String val) {
-                                          _phone = val;
+                                          setState(() {
+                                            _phone = val;
+                                          });
                                         },
                                         decoration: InputDecoration(
                                             labelText: 'Phone Number',
@@ -258,11 +338,9 @@ class RegisterState extends State<Register> {
                             ],
                           ),
                           SizedBox(
-                            height: 25.0,
+                            height: 15.0,
                           ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
+      
                           Container(
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
@@ -288,3 +366,4 @@ class RegisterState extends State<Register> {
     );
   }
 }
+

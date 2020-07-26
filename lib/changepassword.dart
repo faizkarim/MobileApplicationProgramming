@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'dart:async';
-import './modal/mockNotification.dart';
-import './modal/notificationModal.dart';
-import 'package:mobileapp/data/userDetails.dart';
 import 'package:intl/intl.dart';
 
 class Changepassword extends StatefulWidget {
-  final UserDetails _userData;
-  Changepassword(this._userData);
+  get _userData => null;
+
+  
   @override
   _ChangepasswordState createState() => _ChangepasswordState();
 }
@@ -72,8 +70,13 @@ class _ChangepasswordState extends State<Changepassword> {
       if (!currentFocus.hasPrimaryFocus) {
         currentFocus.unfocus();
       }
-      Notifications notifications = new Notifications('Password Changed','Your password has succesfully change',dateTime[0] , dateTime[1], false);
-      mockNotification.add(notifications);
+      // Notifications notifications = new Notifications(
+      //     'Password Changed',
+      //     'Your password has succesfully change',
+      //     dateTime[0],
+      //     dateTime[1],
+      //     false);
+      // mockNotification.add(notifications);
 
       _displaySnackBar(context);
       await Future.delayed(Duration(seconds: 2));
@@ -188,3 +191,4 @@ class _ChangepasswordState extends State<Changepassword> {
         ));
   }
 }
+

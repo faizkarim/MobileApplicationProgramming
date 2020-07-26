@@ -2,18 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import './services/user_services.dart';
 import 'dart:async';
-import 'package:mobileapp/data/userDetails.dart';
-import 'package:image_picker/image_picker.dart';
+import 'modal/userModal.dart';
 
 class Editprofile extends StatefulWidget {
-  final UserDetails userdetails;
-  Editprofile(this.userdetails);
+  
   @override
   _EditprofileState createState() => _EditprofileState();
 }
+Future<User> user;
 
 class _EditprofileState extends State<Editprofile> {
+  String currentUser = "ooJu7yNIWSPoyYnz95as";  
   TextEditingController username = new TextEditingController();
   TextEditingController fullname = new TextEditingController();
   TextEditingController mobile = new TextEditingController();
@@ -30,12 +32,14 @@ class _EditprofileState extends State<Editprofile> {
       _formKey.currentState.save();
       _absorber = !_absorber;
       setState(() {
-        widget.userdetails.profileImage = widget.userdetails.profileImage;
-        widget.userdetails.userName = username.text;
-        widget.userdetails.fullName = fullname.text;
-        widget.userdetails.phoneNo = mobile.text;
-        widget.userdetails.location = location.text;
-        widget.userdetails.email = email.text;
+        User updateInfo = new User(
+          userName: username.text,
+          email: email.text,
+          fullName: fullname.text,
+          phoneNo: mobile.text,
+          location: location.text,
+        );
+        UserService().updateUser(id: currentUser,u: updateInfo);
       });
 
       FocusScopeNode currentFocus = FocusScope.of(context);
@@ -45,7 +49,7 @@ class _EditprofileState extends State<Editprofile> {
 
       _scaffoldKey.currentState.showSnackBar(snackBar);
       await Future.delayed(Duration(seconds: 2));
-      Navigator.pop(context, widget.userdetails);
+      Navigator.pop(context);
     } else {
       setState(() {
         _autoValidate = true;
@@ -106,6 +110,8 @@ class _EditprofileState extends State<Editprofile> {
       return null;
   }
 
+  
+
   final validbar = SnackBar(
       backgroundColor: Colors.blueAccent,
       content: Row(
@@ -121,22 +127,10 @@ class _EditprofileState extends State<Editprofile> {
   @override
   void initState() {
     super.initState();
-    username = TextEditingController(text: widget.userdetails.userName);
-    fullname = TextEditingController(text: widget.userdetails.fullName);
-    mobile = TextEditingController(text: widget.userdetails.phoneNo);
-    location = TextEditingController(text: widget.userdetails.location);
-    email = TextEditingController(text: widget.userdetails.email);
+    user = UserService().getUser(id: currentUser);
   }
 
-  profileImage() {
-    if (widget.userdetails.profileImage != null) {
-      return FileImage(widget.userdetails.profileImage);
-    } else if (imageFile == null) {
-      return null;
-    } else {
-      return FileImage(imageFile);
-    }
-  }
+  
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,215 +153,173 @@ class _EditprofileState extends State<Editprofile> {
                 ))
           ],
         ),
-        body: Padding(
-            padding: const EdgeInsets.fromLTRB(18.0, 0.0, 18.0, 0.0),
-            child: AbsorbPointer(
-              absorbing: _absorber,
-              child: ListView(
-                children: <Widget>[
-                  Text(
-                    'My Profile',
-                    style: TextStyle(
-                        fontSize: 32.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'OpenSans'),
-                  ),
-                  SizedBox(height: 25.0),
-                  GestureDetector(
-                    onTap: () async {
-                      var picture = await ImagePicker.pickImage(
-                          source: ImageSource.gallery);
-                      // Directory picDir = await getApplicationDocumentsDirectory();
-                      // path = picDir.uri.resolve('assets/images/picture.jpg').path;
-                      // file = await picture.copy(path);
-                      setState(() {
-                        imageFile = picture;
-                        widget.userdetails.profileImage = imageFile;
-                      });
-                    },
-                    child: Align(
-                      child: CircleAvatar(
-                        backgroundImage: profileImage(),
-                        backgroundColor: Colors.grey.withOpacity(0.5),
-                        radius: 60.0,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            imageFile != null ||
-                                    widget.userdetails.profileImage != null
-                                ? Container()
-                                : Icon(
-                                    EvaIcons.image,
-                                    size: 60,
-                                    color: Colors.white,
-                                  ),
-                            imageFile != null ||
-                                    widget.userdetails.profileImage != null
-                                ? Container()
-                                : Text(
-                                    'Change Photo',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12.0,
-                                        fontFamily: 'OpenSans'),
-                                  )
-                          ],
-                        ),
+        body: FutureBuilder(
+          future: user,
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData)
+            return Padding(
+                padding: const EdgeInsets.fromLTRB(18.0, 0.0, 18.0, 0.0),
+                child: AbsorbPointer(
+                  absorbing: _absorber,
+                  child: ListView(
+                    children: <Widget>[
+                      Text(
+                        'My Profile',
+                        style: TextStyle(
+                            fontSize: 32.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans'),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 25.0,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Form(
-                        key: _formKey,
-                        autovalidate: _autoValidate,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              height: 50.0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Username',
-                                        style:
-                                            TextStyle(fontFamily: 'OpenSans')),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.8,
-                                    child: TextFormField(
-                                      validator: validateUsername,
-                                      controller: username,
-                                      decoration: InputDecoration(
-                                        isDense: true,
+                      SizedBox(height: 20.0),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Form(
+                            key: _formKey,
+                            autovalidate: _autoValidate,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  height: 50.0,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text('Username',
+                                            style:
+                                                TextStyle(fontFamily: 'OpenSans')),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 15.0),
-                            Container(
-                              height: 50.0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Full Name',
-                                        style:
-                                            TextStyle(fontFamily: 'OpenSans')),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.8,
-                                    child: TextFormField(
-                                      validator: validateFullName,
-                                      controller: fullname,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Container(
-                              height: 50.0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Mobile',
-                                        style:
-                                            TextStyle(fontFamily: 'OpenSans')),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.8,
-                                    child: TextFormField(
-                                      validator: validatePhone,
-                                      controller: mobile,
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              height: 60.0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('My Location',
-                                        style:
-                                            TextStyle(fontFamily: 'OpenSans')),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.8,
-                                    child: DropdownButtonFormField<String>(
-                                      style: TextStyle(color: Colors.black),
-                                      isDense: true,
-                                      items: <String>[
-                                        'Kolej Tun Hussin Onn',
-                                        'Kolej Tun Dr. Ismail',
-                                        'Kolej Tun Razak',
-                                        'Kolej Tuanku Canselor',
-                                        'Kolej Tun Fatimah',
-                                        'Kolej 9 & 10',
-                                        'Kolej Rahman Putra',
-                                        'Kolej Datin Seri Endon',
-                                        'Kolej Dato Onn Jaafar',
-                                        'Kolej Kediaman Siswa Jaya',
-                                        'Kolej Perdana',
-                                      ].map((String value) {
-                                        return new DropdownMenuItem<String>(
-                                          value: value,
-                                          child: new Text(value),
-                                        );
-                                      }).toList(),
-                                      decoration: InputDecoration(
-                                        enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey.withOpacity(0.8),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width / 1.8,
+                                        child: TextFormField(
+                                          validator: validateUsername,
+                                          controller: username = TextEditingController(text: snapshot.data.userName),
+                                          decoration: InputDecoration(
+                                            isDense: true,
                                           ),
                                         ),
                                       ),
-                                      hint: Text(location.text),
-                                      onChanged: (newValue) {
-                                        this.setState(() {
-                                          location.text = newValue;
-                                        });
-                                      },
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
+                                ),
+                                SizedBox(height: 15.0),
+                                Container(
+                                  height: 50.0,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text('Full Name',
+                                            style:
+                                                TextStyle(fontFamily: 'OpenSans')),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width / 1.8,
+                                        child: TextFormField(
+                                          validator: validateFullName,
+                                          controller: fullname  = TextEditingController(text: snapshot.data.fullName),
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                Container(
+                                  height: 50.0,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text('Mobile',
+                                            style:
+                                                TextStyle(fontFamily: 'OpenSans')),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width / 1.8,
+                                        child: TextFormField(
+                                          validator: validatePhone,
+                                          controller: mobile = TextEditingController(text: snapshot.data.phoneNo),
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                                Container(
+                                  height: 60.0,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text('My Location',
+                                            style:
+                                                TextStyle(fontFamily: 'OpenSans')),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width / 1.8,
+                                        child: DropdownButtonFormField<String>(
+                                          style: TextStyle(color: Colors.black),
+                                          isDense: true,
+                                          items: <String>[
+                                            'Kolej Tun Hussin Onn',
+                                            'Kolej Tun Dr. Ismail',
+                                            'Kolej Tun Razak',
+                                            'Kolej Tuanku Canselor',
+                                            'Kolej Tun Fatimah',
+                                            'Kolej 9 & 10',
+                                            'Kolej Rahman Putra',
+                                            'Kolej Datin Seri Endon',
+                                            'Kolej Dato Onn Jaafar',
+                                            'Kolej Kediaman Siswa Jaya',
+                                            'Kolej Perdana',
+                                          ].map((String value) {
+                                            return new DropdownMenuItem<String>(
+                                              value: value,
+                                              child: new Text(value),
+                                            );
+                                          }).toList(),
+                                          decoration: InputDecoration(
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.grey.withOpacity(0.8),
+                                              ),
+                                            ),
+                                          ),
+                                          hint: Text(snapshot.data.location),
+                                          onChanged: (newValue) {
+                                            this.setState(() {
+                                              location.text = newValue;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
                               height: 10.0,
                             ),
                             Container(
@@ -387,7 +339,7 @@ class _EditprofileState extends State<Editprofile> {
                                         MediaQuery.of(context).size.width / 1.8,
                                     child: TextFormField(
                                       validator: validateEmail,
-                                      controller: email,
+                                      controller: email = TextEditingController(text: snapshot.data.email),
                                       decoration: InputDecoration(
                                         isDense: true,
                                       ),
@@ -396,11 +348,20 @@ class _EditprofileState extends State<Editprofile> {
                                 ],
                               ),
                             ),
-                          ],
-                        )),
-                  )
-                ],
-              ),
-            )));
+                              ],
+                            )),
+                      )
+                    ],
+                  ),
+                ));
+          else{
+            return SpinKitFoldingCube(
+                          color: Colors.blueAccent,
+                          size: 30.0,
+                        );
+          }
+          }
+        ));
   }
 }
+

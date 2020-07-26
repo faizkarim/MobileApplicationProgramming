@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import './modal/itemModal.dart';
+import './services/item_services.dart';
 
 class ItemDetailsPage extends StatefulWidget {
   final Item itemDetailsData;
@@ -19,9 +20,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         leading: GestureDetector(
-          onTap:()=> Navigator.of(context).pop(),
-          child:Icon(Icons.arrow_back,color:widget.itemDetailsData.itemImg!=null ?Colors.white:Colors.black54,)
-        ),
+            onTap: () => Navigator.of(context).pop(),
+            child: Icon(
+              Icons.arrow_back,
+              color: widget.itemDetailsData.itemImg != null
+                  ? Colors.white
+                  : Colors.black54,
+            )),
         actions: <Widget>[
           Container(
             margin: EdgeInsets.only(right: 15.0),
@@ -41,15 +46,14 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 width: MediaQuery.of(context).size.width,
                 child: widget.itemDetailsData.itemImg == null
                     ? Container(
-                        child: Row(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Icon(
-                              Icons.broken_image,
+                              Icons.cloud_off,
                               color: Colors.grey,
                             ),
-                            SizedBox(width: 5.0),
                             Text(
                               'Image Not Available',
                               style: TextStyle(
@@ -63,7 +67,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                           width: 1.0,
                         )),
                       )
-                    : Image.file(
+                    : Image.network(
                         widget.itemDetailsData.itemImg,
                         fit: BoxFit.fill,
                       ),
@@ -103,10 +107,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                   color: Colors.black38,
                                 ),
                                 SizedBox(width: 5.0),
-                                Text(
-                                  '1 week ago by ${widget.itemDetailsData.sellerDetails.username}',
-                                  style: TextStyle(color: Colors.black54),
-                                )
                               ],
                             ),
                             new SizedBox(height: 15.0),
@@ -132,7 +132,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 ),
                                 SizedBox(width: 5.0),
                                 Text(
-                                  'in ${widget.itemDetailsData.itemDetails.category}',
+                                  'in ${widget.itemDetailsData.itemdetails.category}',
                                   style: TextStyle(color: Colors.black54),
                                 )
                               ],
@@ -168,7 +168,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             new Expanded(
                               child: Text(
                                   widget
-                                      .itemDetailsData.itemDetails.description,
+                                      .itemDetailsData.itemdetails.description,
                                   style: new TextStyle(
                                       color: Colors.black87,
                                       fontSize: 15.0,
@@ -218,7 +218,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 ),
                                 SizedBox(width: 10.0),
                                 Text(
-                                  widget.itemDetailsData.itemDetails.place,
+                                  widget.itemDetailsData.itemdetails.place,
                                   style: TextStyle(
                                       color: Colors.blueAccent,
                                       fontFamily: 'OpenSans'),
@@ -230,7 +230,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                       ),
                       new Divider(),
                       Container(
-                        child: new Text('Meet The Seller',
+                        child: new Text('Meet The Sellers',
                             style: new TextStyle(
                               fontWeight: FontWeight.bold,
                               fontFamily: 'OpenSans',
@@ -256,9 +256,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  new Text(
-                                      widget.itemDetailsData.sellerDetails
-                                          .username,
+                                  new Text('JohnDoe',
                                       style: new TextStyle(
                                           color: Colors.blueAccent,
                                           fontWeight: FontWeight.w600,
@@ -267,9 +265,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                   SizedBox(
                                     height: 5.0,
                                   ),
-                                  new Text(
-                                      widget.itemDetailsData.sellerDetails
-                                          .phoneNo,
+                                  new Text('johdoe817@gmail.com',
                                       style: new TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 15.0,
@@ -277,9 +273,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                   SizedBox(
                                     height: 5.0,
                                   ),
-                                  new Text(
-                                      widget
-                                          .itemDetailsData.sellerDetails.email,
+                                  new Text('0110273627',
                                       style: new TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 15.0,
@@ -306,17 +300,16 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
             Container(
                 child: GestureDetector(
               onTap: () {
-                setState(() {
-                  if (count == 0) {
-                    count = 1;
-                  } else {
-                    count = 0;
-                  }
-                });
+                ItemService().updateItem(
+                    id: widget.itemDetailsData.id,
+                    save: widget.itemDetailsData.save);
               },
               child: Icon(
-                count == 0 ? EvaIcons.heartOutline : EvaIcons.heart,
-                color: count == 0 ? Colors.black38 : Colors.red,
+                widget.itemDetailsData.save
+                    ? EvaIcons.heart
+                    : EvaIcons.heartOutline,
+                color:
+                    widget.itemDetailsData.save ? Colors.red : Colors.black38,
                 size: 30,
               ),
             )),
