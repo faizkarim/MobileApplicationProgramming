@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/data/mockUserDetails.dart';
-import 'package:mobileapp/data/userDetails.dart';
+import './data/mockUserDetails.dart';
+import './data/userDetails.dart';
 import 'editprofile.dart';
+import 'modal/userModal.dart';
 import 'notifications.dart';
 import 'display.dart';
 import 'changepassword.dart';
 import 'aboutapp.dart';
 import 'firstScreen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import './data/mockUserDetails.dart';
+
 
 class Settings extends StatefulWidget {
   @override
   _SettingsState createState() => _SettingsState();
 }
-
+Future<User> editUser;
 class _SettingsState extends State<Settings> {
+  
   createExitDialog(BuildContext context) {
     Widget yesButton = FlatButton(
         child: Text("Yes"),
@@ -46,7 +48,7 @@ class _SettingsState extends State<Settings> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              Editprofile(UserDetails.copy(mockUserDetails[0]))),
+              Editprofile()),
     );
     if (returnData != null) {
       setState(() => mockUserDetails[0] = returnData);
@@ -54,20 +56,6 @@ class _SettingsState extends State<Settings> {
     }
     else{
       print('object');
-    }
-  }
-
-  void changePasswordNavi() async {
-    final returnData = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                Changepassword(UserDetails.copy(mockUserDetails[0]))));
-
-    if (returnData != null) {
-      setState(() {
-        mockUserDetails[0] = returnData;
-      });
     }
   }
 
@@ -83,7 +71,7 @@ class _SettingsState extends State<Settings> {
               EvaIcons.arrowBack,
               color: Colors.black,
             ),
-            onPressed: () => Navigator.pop(context, mockUserDetails[0])),
+            onPressed: () => Navigator.pop(context)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
@@ -111,7 +99,7 @@ class _SettingsState extends State<Settings> {
                     style: TextStyle(fontFamily: 'OpenSans'),
                   ),
                   trailing: Icon(EvaIcons.chevronRight),
-                  onTap: () => _navigate(),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Editprofile())),
                 ),
                 Divider(),
                 ListTile(
@@ -124,7 +112,8 @@ class _SettingsState extends State<Settings> {
                       style: TextStyle(fontFamily: 'OpenSans'),
                     ),
                     trailing: Icon(EvaIcons.chevronRight),
-                    onTap:()=> changePasswordNavi()),
+                    onTap:()=> Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Changepassword())),
+                ),
                 Divider(),
                 ListTile(
                   leading: Icon(
