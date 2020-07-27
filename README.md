@@ -1,4 +1,5 @@
 Project Title : UniSell App
+
 Synopsis: This repo contains the front-end coding for Unisell.
 
 Group Members :
