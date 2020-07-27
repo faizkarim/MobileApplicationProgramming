@@ -6,7 +6,7 @@ import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:clip_shadow/clip_shadow.dart';
 import './services/user_services.dart';
 import './modal/userModal.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -16,15 +16,21 @@ class ProfileScreen extends StatefulWidget {
 
 Future<User> displayUser;
 class _ProfileScreenState extends State<ProfileScreen> {
-  //final FirebaseAuth _auth = FirebaseAuth.instance;
-  String currentUser = "ooJu7yNIWSPoyYnz95as";
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String currentUser;
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.refresh),
-          onPressed: () {
+          onPressed: () async{
+            currentUser = (await _auth.currentUser()).uid.toString();
             this.setState(() {
               displayUser = UserService().getUser(id: currentUser);
             });
@@ -248,6 +254,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ));
   }
 }
+
+
+
 
 
 
