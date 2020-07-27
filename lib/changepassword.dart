@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class Changepassword extends StatefulWidget {
-  get _userData => null;
-
   
   @override
   _ChangepasswordState createState() => _ChangepasswordState();
@@ -23,6 +21,7 @@ class _ChangepasswordState extends State<Changepassword> {
   DateTime now;
   var dateTime;
   String formattedDate;
+  var signedInUser = FirebaseAuth.instance.currentUser();
 
   @override
   void initState() {
@@ -32,8 +31,17 @@ class _ChangepasswordState extends State<Changepassword> {
     print(formattedDate);
     dateTime = formattedDate.toString().split("/");
     print(dateTime[0]);
+    print(signedInUser.toString());
   }
 
+  _changePassword(String newPassword) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    user.updatePassword(newPassword).then((_){
+      
+    }).catchError((error){
+      print("Password cannot be changed" + error.toString());
+    });
+  }
   _displaySnackBar(BuildContext context) {
     final snackBar = SnackBar(
       content: Row(
@@ -62,25 +70,16 @@ class _ChangepasswordState extends State<Changepassword> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      setState(() {
-        widget._userData.password = _newPass.text;
-      });
+      _changePassword(_newPass.text);
 
       FocusScopeNode currentFocus = FocusScope.of(context);
       if (!currentFocus.hasPrimaryFocus) {
         currentFocus.unfocus();
       }
-      // Notifications notifications = new Notifications(
-      //     'Password Changed',
-      //     'Your password has succesfully change',
-      //     dateTime[0],
-      //     dateTime[1],
-      //     false);
-      // mockNotification.add(notifications);
-
+      
       _displaySnackBar(context);
       await Future.delayed(Duration(seconds: 2));
-      Navigator.pop(context, widget._userData);
+      Navigator.pop(context);
     } else {
       return null;
     }
@@ -89,8 +88,6 @@ class _ChangepasswordState extends State<Changepassword> {
   String validateCurrentPass(String value) {
     if (value.isEmpty)
       return 'Current Password cannot be blank';
-    else if (value != widget._userData.password)
-      return 'Current password does not match';
     else
       return null;
   }
@@ -191,4 +188,5 @@ class _ChangepasswordState extends State<Changepassword> {
         ));
   }
 }
+
 
