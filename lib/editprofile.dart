@@ -8,14 +8,14 @@ import 'dart:async';
 import 'modal/userModal.dart';
 
 class Editprofile extends StatefulWidget {
-  
+  final User user;
+  Editprofile(this.user);
   @override
   _EditprofileState createState() => _EditprofileState();
 }
-Future<User> user;
+Future<User> editUser;
 
 class _EditprofileState extends State<Editprofile> {
-  String currentUser = "ooJu7yNIWSPoyYnz95as";  
   TextEditingController username = new TextEditingController();
   TextEditingController fullname = new TextEditingController();
   TextEditingController mobile = new TextEditingController();
@@ -24,6 +24,7 @@ class _EditprofileState extends State<Editprofile> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _absorber = false;
+  bool _isChanged = false;
   File imageFile;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -39,7 +40,7 @@ class _EditprofileState extends State<Editprofile> {
           phoneNo: mobile.text,
           location: location.text,
         );
-        UserService().updateUser(id: currentUser,u: updateInfo);
+        UserService().updateUser(id: widget.user.id,u: updateInfo);
       });
 
       FocusScopeNode currentFocus = FocusScope.of(context);
@@ -127,7 +128,7 @@ class _EditprofileState extends State<Editprofile> {
   @override
   void initState() {
     super.initState();
-    user = UserService().getUser(id: currentUser);
+    editUser = UserService().getUser(id: widget.user.id);
   }
 
   
@@ -154,7 +155,7 @@ class _EditprofileState extends State<Editprofile> {
           ],
         ),
         body: FutureBuilder(
-          future: user,
+          future: editUser,
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData)
             return Padding(
@@ -273,7 +274,7 @@ class _EditprofileState extends State<Editprofile> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Container(
-                                        child: Text('My Location',
+                                        child: Text('Location',
                                             style:
                                                 TextStyle(fontFamily: 'OpenSans')),
                                       ),
@@ -309,7 +310,14 @@ class _EditprofileState extends State<Editprofile> {
                                             ),
                                           ),
                                           hint: Text(snapshot.data.location),
+                                          onSaved: (value) {
+                                            if(_isChanged)
+                                              location.text = value;
+                                            else
+                                              location.text = snapshot.data.location;
+                                          },
                                           onChanged: (newValue) {
+                                            _isChanged = true;
                                             this.setState(() {
                                               location.text = newValue;
                                             });
@@ -364,4 +372,3 @@ class _EditprofileState extends State<Editprofile> {
         ));
   }
 }
-
