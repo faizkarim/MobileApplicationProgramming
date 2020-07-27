@@ -13,6 +13,6 @@ Group Members :
 4. Muhammad Hazim Bin Saharuddin
 
 
-Back-End Github Link : https://github.com/apizbaha/UnisellBackend.git
+Back-End Github Link : https://github.com/apizbaha/UnisellBackend
 
 Presentation Video URL : https://www.youtube.com/watch?v=CMEd-UQYGKY
