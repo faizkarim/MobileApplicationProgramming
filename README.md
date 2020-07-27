@@ -1,13 +1,12 @@
 Project Title : UniSell App
+Synopsis: This repo contains the front-end coding for Unisell.
 
-Group Members : 
-1. Muhammad Hilman Bin Abdul Jalil 
-2. Muhammad Faiz Bin Karim 
-3. Muhammad Hafiz Bin Baharudin 
-4. Muhammad Hazim Bin Saharuddin
+Group Members :
+Muhammad Hilman Bin Abdul Jalil
+Muhammad Faiz Bin Karim
+Muhammad Hafiz Bin Baharudin
+Muhammad Hazim Bin Saharuddin
 
-Github Link : https://github.com/faizkarim/MobileApplicationProgramming.git
+Back-End Github Link : https://github.com/apizbaha/UnisellBackend.git
 
-Video URL : https://www.youtube.com/watch?v=CMEd-UQYGKY
-
-New Video Project Delivarable #3 Url : https://youtu.be/77PX7VcTPN0
+Presentation Video URL : https://www.youtube.com/watch?v=CMEd-UQYGKY
