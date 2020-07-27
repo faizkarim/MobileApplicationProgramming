@@ -1,49 +1,28 @@
-// import 'package:flutter/material.dart';
-// import 'package:settings/theme.dart';
-// import 'package:provider/provider.dart';
-
-// class Display extends StatelessWidget {
-
-//   Widget build(BuildContext context) {
-//     ThemeChanger _themeChanger = Provider.of<ThemeChanger>(context);
-//     return Scaffold(
-      
-//       appBar: AppBar(
-//         elevation: 0,
-        
-//         leading: IconButton(
-//           icon: Icon(Icons.arrow_back,), 
-//           onPressed: () => Navigator.of(context).pop()
-//         ),
-        
-//         title: Text('Display'),
-//       ),
-//       body: Container(
-//         child: Column(
-//           children: <Widget>[
-//             FlatButton(
-//               child: Text('Light Theme'),
-//               onPressed: () => _themeChanger.setTheme(ThemeData.light()),
-//             ),
-//             FlatButton(
-//               child: Text('Dark Theme'),
-//               onPressed: () => _themeChanger.setTheme(ThemeData.dark()),
-//             ),
-//           ]
-//         )
-//       )
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 class Display extends StatelessWidget {
-  const Display({Key key}) : super(key: key);
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('display'),
-    );
+    return Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(
+          elevation: 0,
+          brightness: Brightness.light,
+          leading: IconButton(
+              icon: Icon(
+                EvaIcons.arrowBack,
+                color: Colors.black,
+              ),
+              onPressed: () => Navigator.of(context).pop()),
+          backgroundColor: Colors.grey.shade200,
+          title: Text(
+            'Display',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        body: Container(
+            child: Center(
+          child: Text('Nothing here'),
+        )));
   }
 }
