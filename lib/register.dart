@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import './services/user_services.dart';
 import './modal/userModal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Color maincolor = Color(0xFFF1E90FF);
 Color secondaryColor = Color(0xFFF3881E3);
@@ -29,11 +30,12 @@ class RegisterState extends State<Register> {
   
   bool _autoValidate = false;
   bool _absorber = false;
-  
+  final CollectionReference postsRef = Firestore.instance.collection('/users');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Timer _timer;
+  
 
   _displaySnackBar(BuildContext context) {
     final snackBar = SnackBar(
@@ -88,7 +90,8 @@ class RegisterState extends State<Register> {
         location: _location,
         email: _email,
       );
-      UserService().addUser(user: newUser);
+      await postsRef.document(_id).setData(newUser.toJson());
+      //UserService().addUser(user: newUser);
       _displaySnackBar(context);
     } else {
       setState(() {
