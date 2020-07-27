@@ -4,13 +4,14 @@ Synopsis: This repo contains the front-end coding for Unisell.
 
 Group Members :
 
-Muhammad Hilman Bin Abdul Jalil
+1. Muhammad Hilman Bin Abdul Jalil
 
-Muhammad Faiz Bin Karim
+2. Muhammad Faiz Bin Karim
 
-Muhammad Hafiz Bin Baharudin
+3. Muhammad Hafiz Bin Baharudin
 
-Muhammad Hazim Bin Saharuddin
+4. Muhammad Hazim Bin Saharuddin
+
 
 Back-End Github Link : https://github.com/apizbaha/UnisellBackend.git
 
