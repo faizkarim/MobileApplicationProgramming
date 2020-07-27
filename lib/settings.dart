@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import './data/mockUserDetails.dart';
-import './data/userDetails.dart';
 import 'editprofile.dart';
 import 'modal/userModal.dart';
 import 'notifications.dart';
@@ -9,19 +7,29 @@ import 'changepassword.dart';
 import 'aboutapp.dart';
 import 'firstScreen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Settings extends StatefulWidget {
   @override
   _SettingsState createState() => _SettingsState();
 }
-Future<User> editUser;
+
 class _SettingsState extends State<Settings> {
-  
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String currentUser;
+  signout() async {
+    try{
+      await _auth.signOut();
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
   createExitDialog(BuildContext context) {
     Widget yesButton = FlatButton(
         child: Text("Yes"),
-        onPressed: () {
+        onPressed: () async{
+          await signout();
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => FirstScreen()));
         });
@@ -41,22 +49,6 @@ class _SettingsState extends State<Settings> {
             ],
           );
         });
-  }
-
-  void _navigate() async {
-    UserDetails returnData = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              Editprofile()),
-    );
-    if (returnData != null) {
-      setState(() => mockUserDetails[0] = returnData);
-      print(returnData.profileImage);
-    }
-    else{
-      print('object');
-    }
   }
 
   @override
@@ -99,7 +91,14 @@ class _SettingsState extends State<Settings> {
                     style: TextStyle(fontFamily: 'OpenSans'),
                   ),
                   trailing: Icon(EvaIcons.chevronRight),
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Editprofile())),
+                  onTap: () async{
+                    currentUser = (await _auth.currentUser()).uid.toString();
+                    User editUser = User(id: currentUser);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Editprofile(editUser)));
+                  },
                 ),
                 Divider(),
                 ListTile(
@@ -186,3 +185,4 @@ class _SettingsState extends State<Settings> {
     );
   }
 }
+
